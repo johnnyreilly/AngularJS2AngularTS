@@ -1,0 +1,10 @@
+﻿{
+    "References": [
+        { "Path": "scripts/angular.js" },
+        { "Path": "scripts/angular-route.js"},
+        { "Path": "scripts/angular-mocks.js"}
+    ],
+    "Tests": [
+        { "Path": "test", "Include": "*.js" },
+    ]
+}

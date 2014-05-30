@@ -1,0 +1,33 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PoorClaresAngular.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SmtpClientPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">587</Value>
+    </Setting>
+    <Setting Name="PrayerResponseEmailSubject" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Thankyou for your prayer request</Value>
+    </Setting>
+    <Setting Name="PrayerRequestEmailSubject" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Prayer request</Value>
+    </Setting>
+    <Setting Name="PrayerResponseEmailFilePathText" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">~/Content/prayerResponse.txt</Value>
+    </Setting>
+    <Setting Name="PrayerResponseEmailFilePathHtml" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">~/Content/prayerResponse.html</Value>
+    </Setting>
+    <Setting Name="SmtpUserName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">notARealUserName</Value>
+    </Setting>
+    <Setting Name="SmtpPassword" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">notARealPassword</Value>
+    </Setting>
+    <Setting Name="SmtpClientHost" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">notARealSmtpClientHost</Value>
+    </Setting>
+    <Setting Name="PrayerRequestEmailAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">notARealEmail@Address.com</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

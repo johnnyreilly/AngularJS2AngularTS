@@ -1,0 +1,28 @@
+﻿@import "build.less";
+//@import "bootstrap/bootstrap.less";
+
+// Animation
+div[ng-view] {
+    &.ng-enter {
+        transition: all 0.4s linear;
+        opacity: 0;
+    }
+
+    &.ng-enter-active {
+        opacity: 1;
+    }
+}
+
+// Spacing around pull-left and pull-right
+.panel{
+    &.pull-left {
+        margin-right: 10px;
+    }
+
+    &.pull-right {
+        margin-left: 10px;
+    }
+}
+
+// http://angular-ui.github.io/bootstrap/
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }

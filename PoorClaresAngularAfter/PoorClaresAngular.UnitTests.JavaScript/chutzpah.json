@@ -1,0 +1,15 @@
+﻿{
+    "References": [
+        { "Path": "../PoorClaresAngular/scripts/angular.js" },
+        { "Path": "../PoorClaresAngular/scripts/angular-route.js"},
+        { "Path": "../PoorClaresAngular/scripts/angular-animate.js"},
+        { "Path": "../PoorClaresAngular/scripts/angular-ui/ui-bootstrap-tpls.js"},
+        { "Path": "../PoorClaresAngular/scripts/angular-mocks.js"},
+        { "Path": "../PoorClaresAngular/js/app.js"},
+        { "Path": "../PoorClaresAngular/js/controllers", "Include": "*.js"},
+        { "Path": "../PoorClaresAngular/js/services", "Include": "*.js"}
+    ],
+    "Tests": [
+        { "Path": "js", "Include": "*.js" }
+    ]
+}

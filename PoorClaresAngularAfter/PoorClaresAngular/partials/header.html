@@ -1,0 +1,9 @@
+﻿<div class="container" ng-controller="NavController" ng-switch on="siteSection">
+    <div ng-switch-when="main">
+        <div ng-include="'partials/main/navbar.html'"></div>
+    </div>
+
+    <div ng-switch-when="theConvent">
+        <div ng-include="'partials/theConvent/navbar.html'"></div>
+    </div>
+</div>
