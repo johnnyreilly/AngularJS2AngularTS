@@ -17,7 +17,8 @@ namespace PoorClaresAngular.Controllers
         private readonly IApplicationSettings _props;
         private readonly IMailer _mailer;
 
-        public PrayerRequestController() : this(new ApplicationSettings(), new Mailer())
+        public PrayerRequestController()
+            : this(new ApplicationSettings(), new Mailer())
         {
         }
 
@@ -56,7 +57,7 @@ namespace PoorClaresAngular.Controllers
                     fromEmail: prayerRequest.email,
                     toEmail: _props.PrayerRequestEmailAddress,
                     subject: _props.PrayerRequestEmailSubject,
-                    text: prayerRequest.prayFor);
+                    text: System.Web.Security.AntiXss.AntiXssEncoder.HtmlEncode(prayerRequest.prayFor, true));
 
                 // Send prayer response email
                 _mailer.SendMail(_props.SmtpClientHost, _props.SmtpClientPort, _props.SmtpUserName, _props.SmtpPassword,

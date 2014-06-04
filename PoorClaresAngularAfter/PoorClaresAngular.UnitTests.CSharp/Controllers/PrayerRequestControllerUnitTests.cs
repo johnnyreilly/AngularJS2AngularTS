@@ -55,49 +55,78 @@ namespace PoorClaresAngular.UnitTests.Controllers
             Assert.AreEqual("Thanks for sending your prayer request - we will pray.", result.GetDataPropertyAs<string>("text"));
         }
 
+        private string _smtpClientHost = "SmtpClientHost";
+        private int _smtpClientPort = 999;
+        private string _smtpUserName = "username";
+        private string _smtpPassword = "password";
+        private string _prayerRequestEmailAddress = "praying@poorclares";
+        private string _prayerRequestEmailSubject = "request";
+        private string _prayerResponseEmailSubject = "response";
+        private string _filePathText = "text path";
+        private string _filePathHtml = "HTML path";
+        private string _text = "I'm text me";
+        private string _html = "I'm HTML me";
+
+        private void SendPrayerRequest_shared_setup()
+        {
+            _applicationSettingsMock.SetupGet(x => x.SmtpClientHost).Returns(_smtpClientHost);
+            _applicationSettingsMock.SetupGet(x => x.SmtpClientPort).Returns(_smtpClientPort);
+            _applicationSettingsMock.SetupGet(x => x.SmtpUserName).Returns(_smtpUserName);
+            _applicationSettingsMock.SetupGet(x => x.SmtpPassword).Returns(_smtpPassword);
+            _applicationSettingsMock.SetupGet(x => x.PrayerRequestEmailAddress).Returns(_prayerRequestEmailAddress);
+            _applicationSettingsMock.SetupGet(x => x.PrayerRequestEmailSubject).Returns(_prayerRequestEmailSubject);
+            _applicationSettingsMock.SetupGet(x => x.PrayerResponseEmailSubject).Returns(_prayerResponseEmailSubject);
+            _applicationSettingsMock.SetupGet(x => x.PrayerResponseEmailFilePathText).Returns(_filePathText);
+            _applicationSettingsMock.SetupGet(x => x.PrayerResponseEmailFilePathHtml).Returns(_filePathHtml);
+
+            _mailerMock.Setup(x => x.ReadTextFromFile(_filePathText)).Returns(_text);
+            _mailerMock.Setup(x => x.ReadTextFromFile(_filePathHtml)).Returns(_html);
+        }
+
         [TestMethod]
         public void SendPrayerRequest_should_send_2_emails_driven_by_application_settings()
         {
             // Arrange
-            var smtpClientHost = "SmtpClientHost";
-            var smtpClientPort = 999;
-            var smtpUserName = "username";
-            var smtpPassword = "password";
-            var prayerRequestEmailAddress = "praying@poorclares";
-            var prayerRequestEmailSubject = "request";
-            var prayerResponseEmailSubject = "response";
-            var filePathText = "text path";
-            var filePathHtml = "HTML path";
-            var text = "I'm text me";
-            var html = "I'm HTML me";
-
-            _applicationSettingsMock.SetupGet(x => x.SmtpClientHost).Returns(smtpClientHost);
-            _applicationSettingsMock.SetupGet(x => x.SmtpClientPort).Returns(smtpClientPort);
-            _applicationSettingsMock.SetupGet(x => x.SmtpUserName).Returns(smtpUserName);
-            _applicationSettingsMock.SetupGet(x => x.SmtpPassword).Returns(smtpPassword);
-            _applicationSettingsMock.SetupGet(x => x.PrayerRequestEmailAddress).Returns(prayerRequestEmailAddress);
-            _applicationSettingsMock.SetupGet(x => x.PrayerRequestEmailSubject).Returns(prayerRequestEmailSubject);
-            _applicationSettingsMock.SetupGet(x => x.PrayerResponseEmailSubject).Returns(prayerResponseEmailSubject);
-            _applicationSettingsMock.SetupGet(x => x.PrayerResponseEmailFilePathText).Returns(filePathText);
-            _applicationSettingsMock.SetupGet(x => x.PrayerResponseEmailFilePathHtml).Returns(filePathHtml);
-
-            _mailerMock.Setup(x => x.ReadTextFromFile(filePathText)).Returns(text);
-            _mailerMock.Setup(x => x.ReadTextFromFile(filePathHtml)).Returns(html);
+            SendPrayerRequest_shared_setup();
 
             // Act
             var prayerRequest = new PrayerRequest { email = "fds@fdsfs", prayFor = "pray for me" };
             var result = _controller.Index(prayerRequest);
 
             // Assert
-            _mailerMock.Verify(x => x.ReadTextFromFile(filePathText));
-            _mailerMock.Verify(x => x.ReadTextFromFile(filePathHtml));
+            _mailerMock.Verify(x => x.ReadTextFromFile(_filePathText));
+            _mailerMock.Verify(x => x.ReadTextFromFile(_filePathHtml));
             _mailerMock.Verify(x =>
-                x.SendMail(smtpClientHost, smtpClientPort, smtpUserName, smtpPassword, prayerRequest.email,
-                           prayerRequestEmailAddress, prayerRequestEmailSubject, prayerRequest.prayFor, null)
+                x.SendMail(_smtpClientHost, _smtpClientPort, _smtpUserName, _smtpPassword, prayerRequest.email,
+                           _prayerRequestEmailAddress, _prayerRequestEmailSubject, prayerRequest.prayFor, null)
                 );
             _mailerMock.Verify(x =>
-                x.SendMail(smtpClientHost, smtpClientPort, smtpUserName, smtpPassword, prayerRequestEmailAddress,
-                           prayerRequest.email, prayerResponseEmailSubject, text, html)
+                x.SendMail(_smtpClientHost, _smtpClientPort, _smtpUserName, _smtpPassword, _prayerRequestEmailAddress,
+                           prayerRequest.email, _prayerResponseEmailSubject, _text, _html)
+                );
+        }
+
+        [TestMethod]
+        public void SendPrayerRequest_should_encode_prayFor_to_prevent_XSS_attacks()
+        {
+            // Arrange
+            SendPrayerRequest_shared_setup();
+
+            // Act
+            var prayerRequest = new PrayerRequest { email = "fds@fdsfs", prayFor = "<script>alert()</script>" };
+            var result = _controller.Index(prayerRequest);
+
+            // Assert
+            _mailerMock.Verify(x =>
+                x.SendMail(_smtpClientHost, _smtpClientPort, _smtpUserName, _smtpPassword, prayerRequest.email,
+                           _prayerRequestEmailAddress, _prayerRequestEmailSubject, prayerRequest.prayFor, null),
+                           Times.Never
+                );
+            _mailerMock.Verify(x =>
+                x.SendMail(_smtpClientHost, _smtpClientPort, _smtpUserName, _smtpPassword, prayerRequest.email,
+                           _prayerRequestEmailAddress, _prayerRequestEmailSubject,
+                           System.Web.Security.AntiXss.AntiXssEncoder.HtmlEncode(prayerRequest.prayFor, true), null),
+                           Times.Once
                 );
         }
     }
